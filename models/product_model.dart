@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 class ProductModel {
   final int pid;
   final String imgUrl;
@@ -20,4 +21,30 @@ class ProductModel {
       required this.rating,
       this.isSelected = false,
       this.qty = 1});
+
+  ProductModel copyWith({
+    int? pid,
+    String? imgUrl,
+    String? title,
+    double? price,
+    String? shortDescription,
+    String? longDescription,
+    int? reviews,
+    double? rating,
+    bool? isSelected,
+    int? qty,
+  }) {
+    return ProductModel(
+      pid: pid ?? this.pid,
+      imgUrl: imgUrl ?? this.imgUrl,
+      title: title ?? this.title,
+      price: price ?? this.price,
+      shortDescription: shortDescription ?? this.shortDescription,
+      longDescription: longDescription ?? this.longDescription,
+      reviews: reviews ?? this.reviews,
+      rating: rating ?? this.rating,
+      isSelected: isSelected ?? this.isSelected,
+      qty: qty ?? this.qty,
+    );
+  }
 }

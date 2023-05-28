@@ -4,10 +4,16 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:my_riverpod_practice/constants/themes.dart';
+import 'package:my_riverpod_practice/controller/item_bag_controller.dart';
 import 'package:my_riverpod_practice/controller/product_controller.dart';
+import 'package:my_riverpod_practice/screens/detail_page.dart';
 import 'package:my_riverpod_practice/widgets/ads_banner.dart';
 import 'package:my_riverpod_practice/widgets/chip.dart';
 import 'package:my_riverpod_practice/widgets/product_card.dart';
+
+final currentIndexProvider = StateProvider<int>((ref) {
+  return 0;
+});
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -15,6 +21,8 @@ class HomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final products = ref.watch(productNotifierProvider);
+    final currentIndex = ref.watch(currentIndexProvider);
+    final itemBag = ref.watch(itemBagProvider);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: kSecondaryColor,
@@ -25,10 +33,16 @@ class HomePage extends ConsumerWidget {
         ),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 20),
-            child: IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.local_mall),
+            padding: const EdgeInsets.only(right: 20, top: 10),
+            child: Badge(
+              label: Text(itemBag.length.toString()),
+              child: IconButton(
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.local_mall,
+                  size: 24,
+                ),
+              ),
             ),
           )
         ],
@@ -95,14 +109,56 @@ class HomePage extends ConsumerWidget {
                 gridDelegate:
                     const SliverSimpleGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2),
-                itemBuilder: (context, index) => SizedBox(
-                  height: 250,
-                  child: ProductCard(productIndex: index),
+                itemBuilder: (context, index) => GestureDetector(
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DetailPage(getIndex: index),
+                    ),
+                  ),
+                  child: SizedBox(
+                    height: 250,
+                    child: ProductCard(productIndex: index),
+                  ),
                 ),
               )
             ],
           ),
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: currentIndex,
+        onTap: (value) =>
+            ref.read(currentIndexProvider.notifier).update((state) => value),
+        selectedItemColor: kPrimaryColor,
+        unselectedItemColor: kSecondaryColor,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            label: 'Home',
+            activeIcon: Icon(Icons.home_filled),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite_outline),
+            label: 'Favorite',
+            activeIcon: Icon(Icons.favorite),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.location_on_outlined),
+            label: 'Location',
+            activeIcon: Icon(Icons.location_on),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications_outlined),
+            label: 'Notification',
+            activeIcon: Icon(Icons.notifications),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline),
+            label: 'Profile',
+            activeIcon: Icon(Icons.person),
+          ),
+        ],
       ),
     );
   }

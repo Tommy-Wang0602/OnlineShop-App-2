@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:my_riverpod_practice/constants/themes.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:my_riverpod_practice/controller/item_bag_controller.dart';
 import 'package:my_riverpod_practice/controller/product_controller.dart';
+import 'package:my_riverpod_practice/models/product_model.dart';
 
 class ProductCard extends ConsumerWidget {
   const ProductCard({
@@ -14,6 +16,7 @@ class ProductCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final product = ref.watch(productNotifierProvider);
+    final eachProduct = product[productIndex];
     return Container(
       decoration: BoxDecoration(
         color: kWhiteColor,
@@ -61,9 +64,33 @@ class ProductCard extends ConsumerWidget {
                       style: AppTheme.kCardTitle,
                     ),
                     IconButton(
-                      onPressed: () {},
-                      icon: const Icon(
-                        Icons.add_circle,
+                      onPressed: () {
+                        ref.read(productNotifierProvider.notifier).isSelectItem(
+                            product[productIndex].pid, productIndex);
+
+                        if (eachProduct.isSelected == false) {
+                          ref
+                              .read(itemBagProvider.notifier)
+                              .addNewItemToitemBag(ProductModel(
+                                  pid: eachProduct.pid,
+                                  imgUrl: eachProduct.imgUrl,
+                                  title: eachProduct.title,
+                                  price: eachProduct.price,
+                                  shortDescription:
+                                      eachProduct.shortDescription,
+                                  longDescription: eachProduct.longDescription,
+                                  reviews: eachProduct.reviews,
+                                  rating: eachProduct.rating));
+                        } else {
+                          ref
+                              .read(itemBagProvider.notifier)
+                              .removeItem(eachProduct.pid);
+                        }
+                      },
+                      icon: Icon(
+                        product[productIndex].isSelected
+                            ? Icons.check_circle
+                            : Icons.add_circle,
                         size: 30,
                       ),
                     )
