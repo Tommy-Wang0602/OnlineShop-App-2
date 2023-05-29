@@ -4,8 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:gap/gap.dart';
 import 'package:my_riverpod_practice/constants/themes.dart';
+import 'package:my_riverpod_practice/controller/item_bag_controller.dart';
 import 'package:my_riverpod_practice/controller/product_controller.dart';
+import 'package:my_riverpod_practice/models/product_model.dart';
+import 'package:my_riverpod_practice/screens/cart_page.dart';
 import 'package:my_riverpod_practice/screens/home_page.dart';
+import '../widgets/product_card.dart';
 
 class DetailPage extends ConsumerWidget {
   DetailPage({super.key, required this.getIndex});
@@ -16,16 +20,28 @@ class DetailPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentIndex = ref.watch(currentIndexProvider);
     final product = ref.watch(productNotifierProvider);
+    final itemBag = ref.watch(itemBagProvider);
+    final detaiPageItem = product[getIndex];
     return Scaffold(
       appBar: AppBar(
         backgroundColor: kSecondaryColor,
         title: const Text('Details Pages'),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 20),
-            child: IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.local_mall),
+            padding: const EdgeInsets.only(right: 20, top: 10),
+            child: Badge(
+              label: Text(itemBag.length.toString()),
+              child: IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const CartPage(),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.local_mall),
+              ),
             ),
           )
         ],
@@ -124,7 +140,25 @@ class DetailPage extends ConsumerWidget {
                       backgroundColor: kPrimaryColor,
                       minimumSize: const Size(double.infinity, 50),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      ref
+                          .read(productNotifierProvider.notifier)
+                          .isSelectItem(detaiPageItem.pid, getIndex);
+
+                      if (detaiPageItem.isSelected == false) {
+                        ref.read(itemBagProvider.notifier).addNewItemToitemBag(
+                            ProductModel(
+                                pid: detaiPageItem.pid,
+                                imgUrl: detaiPageItem.imgUrl,
+                                title: detaiPageItem.title,
+                                price: detaiPageItem.price,
+                                shortDescription:
+                                    detaiPageItem.shortDescription,
+                                longDescription: detaiPageItem.longDescription,
+                                reviews: detaiPageItem.reviews,
+                                rating: detaiPageItem.rating));
+                      }
+                    },
                     child: const Text('Add item to bag'),
                   ),
                 ],

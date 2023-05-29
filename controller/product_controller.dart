@@ -29,7 +29,7 @@ class ProductNotifier extends StateNotifier<List<ProductModel>> {
   void decreaseQty(int pid) {
     state = [
       for (final product in state)
-        if (product.pid == pid)
+        if (product.pid == pid && product.qty >= 1)
           product.copyWith(qty: product.qty -= 1)
         else
           product

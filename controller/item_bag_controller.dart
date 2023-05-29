@@ -25,3 +25,13 @@ final itemBagProvider =
     StateNotifierProvider<ItemBagNotifier, List<ProductModel>>((ref) {
   return ItemBagNotifier();
 });
+
+final priceCalcProvider = StateProvider<double>((ref) {
+  final itemBag = ref.watch(itemBagProvider);
+
+  double sum = 0;
+  for (var element in itemBag) {
+    sum += element.price;
+  }
+  return sum;
+});

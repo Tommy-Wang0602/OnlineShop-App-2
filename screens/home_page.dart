@@ -6,6 +6,7 @@ import 'package:gap/gap.dart';
 import 'package:my_riverpod_practice/constants/themes.dart';
 import 'package:my_riverpod_practice/controller/item_bag_controller.dart';
 import 'package:my_riverpod_practice/controller/product_controller.dart';
+import 'package:my_riverpod_practice/screens/cart_page.dart';
 import 'package:my_riverpod_practice/screens/detail_page.dart';
 import 'package:my_riverpod_practice/widgets/ads_banner.dart';
 import 'package:my_riverpod_practice/widgets/chip.dart';
@@ -37,7 +38,14 @@ class HomePage extends ConsumerWidget {
             child: Badge(
               label: Text(itemBag.length.toString()),
               child: IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const CartPage(),
+                    ),
+                  );
+                },
                 icon: const Icon(
                   Icons.local_mall,
                   size: 24,
